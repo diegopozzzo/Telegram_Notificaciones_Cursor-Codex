@@ -1,0 +1,12 @@
+{
+  "enabled": true,
+  "botToken": "PON_AQUI_TU_BOT_TOKEN",
+  "chatId": "PON_AQUI_TU_CHAT_ID",
+  "messagePrefix": "Codex",
+  "sendWaitingNotification": true,
+  "sendFinishedNotification": true,
+  "sendUnknownStops": true,
+  "includeDebugReason": true,
+  "enableTelegramReplies": true,
+  "telegramPollTimeoutSeconds": 1
+}
