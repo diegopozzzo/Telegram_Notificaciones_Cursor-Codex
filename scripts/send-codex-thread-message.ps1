@@ -14,10 +14,24 @@ $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = (Resolve-Path (Join-Path $scriptRoot '..')).Path
 $logDirectory = Join-Path $repoRoot 'logs'
 $logPath = Join-Path $logDirectory 'codex-telegram-bridge.log'
+$fallbackLogPath = Join-Path $logDirectory 'codex-telegram-bridge-fallback.log'
 $codexCommand = (Get-Command codex -ErrorAction Stop).Source
 $logMutexName = 'Global\CodexTelegramBridgeLog'
 $safeThreadId = ($ThreadId -replace '[^A-Za-z0-9]', '_')
 $threadMutexName = "Global\CodexTelegramBridgeThread_$safeThreadId"
+$utf8Encoding = [System.Text.UTF8Encoding]::new($false)
+$script:BridgeObservedTurnStarted = $false
+$script:BridgeObservedTurnCompleted = $false
+$script:BridgeObservedFinalMessage = $false
+
+function Append-LogLine {
+    param(
+        [string]$Path,
+        [string]$Line
+    )
+
+    [System.IO.File]::AppendAllText($Path, "$Line`r`n", $utf8Encoding)
+}
 
 function Write-Log {
     param([string]$Message)
@@ -38,16 +52,18 @@ function Write-Log {
 
         for ($attempt = 0; $attempt -lt 5; $attempt++) {
             try {
-                Add-Content -Path $logPath -Value $line -Encoding UTF8
+                Append-LogLine -Path $logPath -Line $line
                 return
             }
             catch {
-                if ($attempt -eq 4) {
-                    throw
-                }
-
                 Start-Sleep -Milliseconds 150
             }
+        }
+
+        try {
+            Append-LogLine -Path $fallbackLogPath -Line $line
+        }
+        catch {
         }
     }
     finally {
@@ -93,6 +109,37 @@ function Get-PreviewText {
     return $normalized.Substring(0, $MaxLength - 3) + '...'
 }
 
+function Get-WorkspaceAliasPath {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return $Path
+    }
+
+    $aliasRoot = Join-Path $env:LOCALAPPDATA 'CodexBridgeWorkspaces'
+    if (-not (Test-Path $aliasRoot)) {
+        New-Item -ItemType Directory -Force -Path $aliasRoot | Out-Null
+    }
+
+    $sha256 = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $hashBytes = $sha256.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($Path))
+    }
+    finally {
+        $sha256.Dispose()
+    }
+
+    $hashText = [System.BitConverter]::ToString($hashBytes).Replace('-', '').ToLowerInvariant()
+    $aliasPath = Join-Path $aliasRoot ("workspace-" + $hashText.Substring(0, 12))
+
+    if (-not (Test-Path $aliasPath)) {
+        New-Item -ItemType Junction -Path $aliasPath -Target $Path | Out-Null
+        Write-Log "Workspace alias created for bridge: $aliasPath -> $Path"
+    }
+
+    return $aliasPath
+}
+
 function Handle-StdoutLine {
     param(
         [string]$ThreadId,
@@ -120,6 +167,7 @@ function Handle-StdoutLine {
             }
         }
         'turn.started' {
+            $script:BridgeObservedTurnStarted = $true
             Write-Log "Turn started for thread '$ThreadId'."
         }
         'item.started' {
@@ -145,6 +193,7 @@ function Handle-StdoutLine {
             }
         }
         'turn.completed' {
+            $script:BridgeObservedTurnCompleted = $true
             Write-Log "Turn completed for thread '$ThreadId'."
         }
     }
@@ -157,8 +206,10 @@ $promptPath = Join-Path $logDirectory ("bridge-prompt-$messageHash.txt")
 $stdoutPath = Join-Path $logDirectory ("bridge-stdout-$messageHash.jsonl")
 $stderrPath = Join-Path $logDirectory ("bridge-stderr-$messageHash.log")
 $outputPath = Join-Path $logDirectory ("bridge-last-message-$ThreadId.txt")
+$bridgeWorkspacePath = Get-WorkspaceAliasPath -Path $repoRoot
 $threadMutex = $null
 $threadMutexAcquired = $false
+$cleanupArtifacts = $false
 
 try {
     if (-not (Test-Path $logDirectory)) {
@@ -186,7 +237,7 @@ try {
         $previousErrorActionPreference = $ErrorActionPreference
         $ErrorActionPreference = 'Continue'
         Get-Content -Path $promptPath -Raw -Encoding UTF8 |
-            & $codexCommand exec resume $ThreadId - --json --dangerously-bypass-approvals-and-sandbox -o $outputPath 1> $stdoutPath 2> $stderrPath
+            & $codexCommand exec -C $bridgeWorkspacePath resume $ThreadId - --json --dangerously-bypass-approvals-and-sandbox -o $outputPath 1> $stdoutPath 2> $stderrPath
         $exitCode = $LASTEXITCODE
     }
     finally {
@@ -214,20 +265,42 @@ try {
         $finalMessage = Get-Content -Path $outputPath -Raw -Encoding UTF8
         $finalPreview = Get-PreviewText -Text $finalMessage -MaxLength 220
         if (-not [string]::IsNullOrWhiteSpace($finalPreview)) {
+            $script:BridgeObservedFinalMessage = $true
             Write-Log "Final response preview for thread '$ThreadId': $finalPreview"
         }
     }
 
+    if (-not $script:BridgeObservedTurnStarted -and -not $script:BridgeObservedFinalMessage) {
+        throw 'Codex exec finalizo sin crear un turno ni una respuesta final.'
+    }
+
     Write-Log "Bridge finished successfully for thread '$ThreadId'. Timeout budget was $TimeoutMinutes minute(s)."
+    $cleanupArtifacts = $true
 }
 catch {
-    Write-Log "Bridge error for thread '$ThreadId': $($_.Exception.Message)"
+    $stderrPreview = ''
+    if (Test-Path $stderrPath) {
+        $stderrTail = Get-Content -Path $stderrPath -Encoding UTF8 | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Last 8
+        if ($stderrTail) {
+            $stderrPreview = Get-PreviewText -Text ($stderrTail -join ' ') -MaxLength 220
+        }
+    }
+
+    $artifactSummary = "stdout=$stdoutPath; stderr=$stderrPath; prompt=$promptPath"
+    if ([string]::IsNullOrWhiteSpace($stderrPreview)) {
+        Write-Log "Bridge error for thread '$ThreadId': $($_.Exception.Message). Artefactos preservados en $artifactSummary"
+    }
+    else {
+        Write-Log "Bridge error for thread '$ThreadId': $($_.Exception.Message). stderr: $stderrPreview. Artefactos preservados en $artifactSummary"
+    }
     throw
 }
 finally {
-    foreach ($tempPath in @($promptPath, $stdoutPath, $stderrPath)) {
-        if (Test-Path $tempPath) {
-            Remove-Item -LiteralPath $tempPath -Force -ErrorAction SilentlyContinue
+    if ($cleanupArtifacts) {
+        foreach ($tempPath in @($promptPath, $stdoutPath, $stderrPath)) {
+            if (Test-Path $tempPath) {
+                Remove-Item -LiteralPath $tempPath -Force -ErrorAction SilentlyContinue
+            }
         }
     }
 
