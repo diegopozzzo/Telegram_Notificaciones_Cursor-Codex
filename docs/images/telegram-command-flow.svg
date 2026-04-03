@@ -1,0 +1,41 @@
+<svg width="800" height="1400" viewBox="0 0 800 1400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="1400" fill="#0F172A"/>
+  <rect x="110" y="40" width="580" height="1320" rx="48" fill="#111827" stroke="#334155" stroke-width="4"/>
+  <rect x="320" y="68" width="160" height="18" rx="9" fill="#475569"/>
+  <rect x="140" y="110" width="520" height="100" rx="24" fill="url(#header)"/>
+  <circle cx="196" cy="160" r="34" fill="#F97316"/>
+  <circle cx="196" cy="160" r="24" fill="#1F2937"/>
+  <text x="248" y="154" fill="#F8FAFC" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700">no_poz</text>
+  <text x="248" y="190" fill="#CBD5E1" font-family="Segoe UI, Arial, sans-serif" font-size="24">bot</text>
+
+  <rect x="144" y="250" width="510" height="520" rx="28" fill="#1E293B"/>
+  <text x="172" y="304" fill="#F8FAFC" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700">1. /chats lista los hilos disponibles</text>
+  <text x="172" y="350" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="24">Chats disponibles:</text>
+  <text x="172" y="390" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="24">Codex:</text>
+  <text x="172" y="430" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="24">C1) NOTIFICACION_CURSOR | hilo 019d198e-a89</text>
+  <text x="172" y="470" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="24">C2) diego-portfolio-elegant-strategic</text>
+  <text x="172" y="510" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="24">C3) magnuspage</text>
+  <text x="172" y="550" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="24">Cursor:</text>
+  <text x="172" y="590" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="24">U1) NOTIFICACION_CURSOR | conversacion cursor-test</text>
+  <text x="172" y="640" fill="#93C5FD" font-family="Segoe UI, Arial, sans-serif" font-size="24">Usa /codex C1 &lt;mensaje&gt; o /cursor U1 &lt;mensaje&gt;</text>
+  <text x="172" y="690" fill="#CBD5E1" font-family="Segoe UI, Arial, sans-serif" font-size="22">Si no indicas id, usa el ultimo chat detectado.</text>
+
+  <rect x="256" y="810" width="398" height="118" rx="28" fill="#A855F7"/>
+  <text x="286" y="858" fill="#FFFFFF" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700">/codex C1 haz el siguiente paso</text>
+  <text x="544" y="898" fill="#F5D0FE" font-family="Segoe UI, Arial, sans-serif" font-size="22">12:19 PM</text>
+
+  <rect x="144" y="958" width="510" height="240" rx="28" fill="#1E293B"/>
+  <text x="172" y="1010" fill="#F8FAFC" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700">2. El bot confirma el envio</text>
+  <text x="172" y="1060" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="24">Codex: mensaje enviado</text>
+  <text x="172" y="1100" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="24">Proyecto: NOTIFICACION_CURSOR</text>
+  <text x="172" y="1140" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="24">Hilo: 019d198e-a89</text>
+  <text x="172" y="1180" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="24">Texto: haz el siguiente paso</text>
+  <text x="172" y="1220" fill="#CBD5E1" font-family="Segoe UI, Arial, sans-serif" font-size="22">Luego Telegram avisa cuando Codex termina o si el turno se interrumpe.</text>
+
+  <defs>
+    <linearGradient id="header" x1="140" y1="110" x2="660" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1E3A8A"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+</svg>

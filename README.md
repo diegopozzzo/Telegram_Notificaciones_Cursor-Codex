@@ -132,6 +132,31 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\watch-codex-sessio
 
 Responder directo a una notificacion es la forma mas precisa porque el watcher ya sabe exactamente a que hilo volver.
 
+## Referencias visuales
+
+### Flujo de comandos en Telegram
+
+La secuencia normal es:
+
+1. ejecutar `/chats`
+2. elegir un alias como `C1`
+3. mandar `/codex C1 <mensaje>`
+4. esperar el acuse y la respuesta final
+
+![Flujo de comandos en Telegram](docs/images/telegram-command-flow.svg)
+
+### Respuesta final en Telegram
+
+Cuando Codex termina, Telegram devuelve la respuesta completa en el mismo chat. Esta captura es una prueba real del flujo:
+
+![Notificacion final de Codex en Telegram](docs/images/telegram-finished-notification.png)
+
+### Resultado reflejado en Codex local
+
+La misma accion tambien queda visible en Codex local. Esta lamina resume el tipo de salida que luego se replica en Telegram:
+
+![Resultado local de Codex](docs/images/codex-local-confirmation.svg)
+
 ## Como explorar proyectos desde Telegram
 
 Para Codex:

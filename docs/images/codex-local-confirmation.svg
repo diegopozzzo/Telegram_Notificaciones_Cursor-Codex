@@ -1,0 +1,24 @@
+<svg width="1400" height="980" viewBox="0 0 1400 980" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="980" fill="#09090B"/>
+  <rect x="28" y="28" width="1344" height="924" rx="28" fill="#111111" stroke="#27272A" stroke-width="2"/>
+  <rect x="58" y="58" width="1284" height="864" rx="20" fill="#121212"/>
+  <text x="96" y="118" fill="#FAFAFA" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700">CODEX</text>
+  <text x="96" y="176" fill="#E4E4E7" font-family="Segoe UI, Arial, sans-serif" font-size="28">Configurar notificacion Telegram</text>
+  <text x="96" y="230" fill="#A1A1AA" font-family="Segoe UI, Arial, sans-serif" font-size="24">El flujo queda validado cuando Telegram y Codex reflejan el mismo resultado.</text>
+
+  <rect x="1000" y="220" width="250" height="110" rx="28" fill="#27272A"/>
+  <text x="1030" y="286" fill="#FAFAFA" font-family="Segoe UI, Arial, sans-serif" font-size="30">Valida este mensaje</text>
+
+  <text x="96" y="424" fill="#FAFAFA" font-family="Segoe UI, Arial, sans-serif" font-size="30">Validado: el mensaje llego a Codex.</text>
+
+  <rect x="948" y="500" width="302" height="122" rx="28" fill="#27272A"/>
+  <text x="980" y="566" fill="#FAFAFA" font-family="Segoe UI, Arial, sans-serif" font-size="28">Sube la actualizacion</text>
+  <text x="980" y="602" fill="#FAFAFA" font-family="Segoe UI, Arial, sans-serif" font-size="28">a github</text>
+
+  <rect x="88" y="700" width="1180" height="164" rx="28" fill="#18181B" stroke="#27272A" stroke-width="2"/>
+  <text x="118" y="756" fill="#FAFAFA" font-family="Segoe UI, Arial, sans-serif" font-size="30">La actualizacion ya esta en GitHub.</text>
+  <text x="118" y="808" fill="#E4E4E7" font-family="Segoe UI, Arial, sans-serif" font-size="28">Rama: main</text>
+  <text x="336" y="808" fill="#E4E4E7" font-family="Segoe UI, Arial, sans-serif" font-size="28">Commit: 293a8c9</text>
+  <text x="652" y="808" fill="#93C5FD" font-family="Segoe UI, Arial, sans-serif" font-size="28">Repo: github.com/diegopozzzo/Telegram_Notificaciones_Cursor-Codex.git</text>
+  <text x="118" y="850" fill="#A1A1AA" font-family="Segoe UI, Arial, sans-serif" font-size="24">Este es el tipo de respuesta completa que luego se replica en Telegram.</text>
+</svg>
